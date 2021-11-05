@@ -10,7 +10,8 @@ PASSWORD = "hunter1"
 users_playlists = [2019386, 5343409, 9082438]
 subscriber_count = 10
 
-RESPONCES = ['yes', 'YES', 'Yes', 'no', 'NO', 'No']
+
+RESPONCES = ['yes', 'no']
 ACTIONS = [1, 2, 4]
 
 # Site Policies
@@ -22,6 +23,7 @@ top_hits_playlist = [5390161, 7736243, 8267507, 4922599, 4559658, 9897626, 14610
 5746821, 9566779, 5718817, 2459304, 5610524, 6980497, 4547223, 9086699]
 top_2010s_playlist = [3720918, 6382983, 1012930, 1109274, 2981023, 7394792]
 my_mix = [6382983, 2981023, 9086699]
+
 
 # Dictionaries
 playlist_id_to_video_list = {2019386 : top_hits_playlist, 5343409: top_2010s_playlist, 9082438: my_mix}
@@ -62,21 +64,43 @@ video_id_to_title = {
 def get_shuffled_playlist(video_list: List[int]) -> List[int]:
     shuffled_playlist = []
     
-    if video_id == top_hits_playlist:
+    if video_list == top_hits_playlist:
          shuffled_playlist = users_playlists[0]
-    elif video_id == top_2010s_playlist:
+    elif video_list == top_2010s_playlist:
          shuffled_playlist = users_playlists[1]
-    elif video_id == my_mix:
+    elif video_list == my_mix:
         shuffled_playlist = users_playlists[2]
         
-    random.shuffle(video_id)
+    random.shuffle(video_list)
+
+    print('*' * len(playlist_to_action))
+    print(playlist_to_action)
+    print('*' * len(playlist_to_action))
     
     return display_full_playlist(shuffled_playlist)
 
 
-
 def get_shortend_playlist(video_list: List[int]) -> List[int]:
-    pass
+    shortened_playlist = []
+
+    if video_list == top_hits_playlist:
+         shortened_playlist = users_playlists[0]
+    elif video_list == top_2010s_playlist:
+         shortened_playlist = users_playlists[1]
+    elif video_list == my_mix:
+        shortened_playlist = users_playlists[2]
+
+    video_list.pop(0)
+
+    if len(video_list) >= 1:
+        print('*' * len(playlist_to_action))
+        print(playlist_to_action)
+        print('*' * len(playlist_to_action))
+    elif len(video_list) < 1:
+        print('Error.')
+        sys.exit()
+
+    return display_full_playlist(shortened_playlist)
 
 
 def display_full_playlist(playlist_id: int):
@@ -89,13 +113,13 @@ def display_full_playlist(playlist_id: int):
     elif playlist_id == users_playlists[2]:
         playlist_id = my_mix
         
-    for video_id in playlist_id:
-        if video_id in video_id_to_title:
-            play_list.append(video_id_to_title[video_id])
+    for id in playlist_id:
+        if id in video_id_to_title:
+            play_list.append(video_id_to_title[id])
 
-    for song in play_list[:5]:
+    for song in play_list[:MAX_VIDEOS_OUTPUTTED_AT_ONCE]:
         print(song)
-    for song in play_list[:5]:
+    for song in play_list[:MAX_VIDEOS_OUTPUTTED_AT_ONCE]:
         play_list.remove(song)
 
     see_playlist = ''
@@ -113,16 +137,17 @@ def display_full_playlist(playlist_id: int):
         if playlist_to_action not in playlist_title_to_id:
             print('Error.')
             sys.exit()
+
     else:
         see_playlist = input('...Do you want to see more? ')
         if see_playlist not in RESPONCES:
             print('Error.')
             sys.exit()
             
-    while see_playlist in RESPONCES[:3]:
-        for song in play_list[:5]:
+    while see_playlist == 'yes':
+        for song in play_list[:MAX_VIDEOS_OUTPUTTED_AT_ONCE]:
             print(song)
-        for song in play_list[:5]:
+        for song in play_list[:MAX_VIDEOS_OUTPUTTED_AT_ONCE]:
             play_list.remove(song)
             
         if len(play_list) < 1:
@@ -136,6 +161,7 @@ def display_full_playlist(playlist_id: int):
             if playlist_to_action not in playlist_title_to_id:
                 print('Error.')
                 sys.exit()
+        
             if playlist_to_action == 'Top Hits':
                 playlist_id = users_playlists[0]
             elif playlist_to_action == 'Top 2010s':
@@ -144,13 +170,14 @@ def display_full_playlist(playlist_id: int):
                 playlist_id = users_playlists[2]
         
             do_playlist_action(playlist_id, action_choise)
+
         else:
             see_playlist = input('...Do you want to see more? ')
             if see_playlist not in RESPONCES:
                 print('Error.')
                 sys.exit()
             
-    if see_playlist in RESPONCES[3:]:
+    if see_playlist == 'no':
         action_choise = int(input('Actions: 1 for shuffle, 2 for shorten, 4 for exit. '))
         if action_choise not in ACTIONS:
             print('Error.')
@@ -161,7 +188,7 @@ def display_full_playlist(playlist_id: int):
         if playlist_to_action not in playlist_title_to_id:
             print('Error.')
             sys.exit()
-    
+
     if playlist_to_action == 'Top Hits':
         playlist_id = users_playlists[0]
     elif playlist_to_action == 'Top 2010s':
@@ -181,7 +208,7 @@ def display_playlist_preview(playlist_id: int) -> None:
     elif playlist_id == users_playlists[1]:
         print("Top 2010s")
         top_2010s_video_count = len(top_2010s_playlist)
-        print(top_2010s_video_count,"videos")
+        print(top_2010s_video_count, "videos")
         print()
     elif playlist_id == users_playlists[2]:
         print("My Mix")
@@ -199,26 +226,32 @@ def display_personal_homepage() -> None:
 
 
 def do_playlist_action(playlist_id: int, choice: int) -> None:
-    global video_id
+    global video_list
+
     if playlist_id == users_playlists[0]:
-        video_id = top_hits_playlist
+        video_list = top_hits_playlist
     elif playlist_id == users_playlists[1]:
-        video_id = top_2010s_playlist
+        video_list = top_2010s_playlist
     elif playlist_id == users_playlists[2]:
-        video_id = my_mix
-        
+        video_list = my_mix
+   
     if action_choise == 1:
-        get_shuffled_playlist(video_id)
+        get_shuffled_playlist(video_list)
+    if action_choise == 2:
+        get_shortend_playlist(video_list)
 
 
 def main_playlist_interface() -> None:
     choose_playlist = input('Which playlist do you want to see? ')
+
     if choose_playlist not in playlist_title_to_id:
         print('Error.')
         sys.exit()
+
     print('*' * len(choose_playlist))
     print(choose_playlist)
     print('*' * len(choose_playlist))
+
     if choose_playlist == 'Top Hits':
         playlist_id = users_playlists[0]
     elif choose_playlist == 'Top 2010s':
@@ -251,6 +284,7 @@ def user_login() -> bool:
             return successful_login
 
 print("> YouTube")
+
 successful_login = False
 
 user_login()
