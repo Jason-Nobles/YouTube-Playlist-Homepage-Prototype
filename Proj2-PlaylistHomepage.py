@@ -290,3 +290,7 @@ print("> YouTube")
 successful_login = False
 
 user_login()
+
+if successful_login:
+    display_personal_homepage
+    main_playlist_interface
