@@ -2,7 +2,7 @@ from typing import List
 import random
 import sys
 # My name: Jason Nobles
-# My partner's name: Jaden Nobles
+
 
 # User Information
 USERNAME = "MusicFan'03"
@@ -77,7 +77,9 @@ def get_shuffled_playlist(video_list: List[int]) -> List[int]:
     print(playlist_to_action)
     print('*' * len(playlist_to_action))
     
-    return display_full_playlist(shuffled_playlist)
+    display_full_playlist(shuffled_playlist)
+    
+    return shuffled_playlist
 
 
 def get_shortend_playlist(video_list: List[int]) -> List[int]:
@@ -103,7 +105,7 @@ def get_shortend_playlist(video_list: List[int]) -> List[int]:
     return display_full_playlist(shortened_playlist)
 
 
-def display_full_playlist(playlist_id: int):
+def display_full_playlist(playlist_id: int) -> None:
     play_list = []
     
     if playlist_id == users_playlists[0]:
@@ -131,7 +133,7 @@ def display_full_playlist(playlist_id: int):
         if action_choise not in ACTIONS:
             print('Error.')
             sys.exit()
-        elif action_choise == 4:
+        elif action_choise == ACTIONS[2]:
             sys.exit()
         playlist_to_action = input('Which playlist do you want to see? ')
         if playlist_to_action not in playlist_title_to_id:
@@ -155,7 +157,7 @@ def display_full_playlist(playlist_id: int):
             if action_choise not in ACTIONS:
                 print('Error.')
                 sys.exit()
-            elif action_choise == 4:
+            elif action_choise == ACTIONS[2]:
                 sys.exit()
             playlist_to_action = input('Which playlist do you want to see? ')
             if playlist_to_action not in playlist_title_to_id:
@@ -182,7 +184,7 @@ def display_full_playlist(playlist_id: int):
         if action_choise not in ACTIONS:
             print('Error.')
             sys.exit()
-        elif action_choise == 4:
+        elif action_choise == ACTIONS[2]:
             sys.exit()
         playlist_to_action = input('Which playlist do you want to see? ')
         if playlist_to_action not in playlist_title_to_id:
@@ -215,7 +217,7 @@ def display_playlist_preview(playlist_id: int) -> None:
         my_mix_video_count = len(my_mix)
         print(my_mix_video_count, "videos")
         print()
-
+    
 
      
  
@@ -265,12 +267,12 @@ def main_playlist_interface() -> None:
 def user_login() -> bool:
     attempts = 0
     global successful_login
-    while attempts <= 3:
+    while attempts <= MAX_PASSWORD_ATTEMPTS_ALLOWED:
         enter_username = input('Username: ')
         enter_password = input('Password: ')
         if enter_username != USERNAME or enter_password != PASSWORD:
             attempts += 1
-            if attempts == 3:
+            if attempts == MAX_PASSWORD_ATTEMPTS_ALLOWED:
                 print('Access Denied.')
                 sys.exit()
             else:
@@ -288,7 +290,3 @@ print("> YouTube")
 successful_login = False
 
 user_login()
-
-if successful_login:
-    display_personal_homepage()
-    main_playlist_interface()
